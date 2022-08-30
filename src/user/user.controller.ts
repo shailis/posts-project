@@ -1,9 +1,9 @@
 import {
   Body,
-  ConsoleLogger,
   Controller,
   HttpCode,
   HttpStatus,
+  Logger,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -14,20 +14,17 @@ import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly logger: ConsoleLogger,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post('signup')
   signup(@Body() signUpDto: SignUpDto) {
-    this.logger.log('user-->user.controller.ts-->signup');
+    Logger.log('user-->user.controller.ts-->signup');
     return this.userService.signup(signUpDto);
   }
 
   @Post('signin')
   signin(@Body() signInDto: SignInDto) {
-    this.logger.log('user-->user.controller.ts-->signin');
+    Logger.log('user-->user.controller.ts-->signin');
     return this.userService.signin(signInDto);
   }
 
@@ -35,7 +32,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @Post('signout')
   signout(@GetUser('id') userId: string) {
-    this.logger.log('user-->user.controller.ts-->signout');
+    Logger.log('user-->user.controller.ts-->signout');
     return this.userService.signout(userId);
   }
 }

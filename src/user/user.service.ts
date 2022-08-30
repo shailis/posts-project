@@ -16,11 +16,20 @@ export class UserService {
     private readonly i18n: I18nService,
   ) {}
 
+  /**
+   * @function signup
+   * @description Signs up a user
+   * @author Shaili S.
+   * @module user
+   * @param signUpDto
+   * @returns { statusCode: HttpStatus; data: Omit<User, 'password'>; message: any }
+   */
   async signup(signUpDto: SignUpDto): Promise<{
     statusCode: HttpStatus;
     data: Omit<User, 'password'>;
     message: any;
   }> {
+    Logger.log('user-->user.service.ts-->signup');
     try {
       // hash password
       const passwordHash = await this.generateHash(signUpDto.password);
@@ -63,11 +72,20 @@ export class UserService {
     }
   }
 
+  /**
+   * @function signin
+   * @description Signs in a user
+   * @author Shaili S.
+   * @module user
+   * @param signInDto
+   * @returns { statusCode: HttpStatus; data: Omit<User, 'password'>; message: any; }
+   */
   async signin(signInDto: SignInDto): Promise<{
     statusCode: HttpStatus;
     data: Omit<User, 'password'>;
     message: any;
   }> {
+    Logger.log('user-->user.service.ts-->signin');
     try {
       // find user
       const user: User = await this.prisma.user.findUnique({
@@ -117,12 +135,22 @@ export class UserService {
     }
   }
 
+  /**
+   * @function signout
+   * @description Signs out a user
+   * @author Shaili S.
+   * @module user
+   * @param userId
+   * @returns { statusCode: HttpStatus; data: Omit<User, 'password'>; message: any; }
+   */
   async signout(userId: string): Promise<{
     statusCode: HttpStatus;
     data: Omit<User, 'password'>;
     message: any;
   }> {
+    Logger.log('user-->user.service.ts-->signout');
     try {
+      // clear authToken of user
       const userWithoutAuthToken = await this.prisma.user.update({
         where: { id: userId },
         data: { authToken: '' },
@@ -138,18 +166,43 @@ export class UserService {
     }
   }
 
+  /**
+   * @function generateHash
+   * @description Generates a hash for password
+   * @author Shaili S.
+   * @module user
+   * @param password
+   * @returns passwordHash: string
+   */
   async generateHash(password: string): Promise<string> {
     const saltRounds = 10;
     const passwordHash: string = await bcrypt.hash(password, saltRounds);
     return passwordHash;
   }
 
+  /**
+   * @function generateToken
+   * @description Generates JWT token
+   * @author Shaili S.
+   * @module user
+   * @param id
+   * @param email
+   * @returns authToken: string
+   */
   async generateToken(id: string, email: string): Promise<string> {
     const payload = { sub: id, email: email };
     const authToken: string = await this.jwt.signAsync(payload);
     return authToken;
   }
 
+  /**
+   * @function exclude
+   * @description Exclude keys of user before sending response
+   * @author Shaili S.
+   * @param user
+   * @param keys
+   * @returns Omit<User, Key>
+   */
   exclude<User, Key extends keyof User>(
     user: User,
     ...keys: Key[]
@@ -160,8 +213,14 @@ export class UserService {
     return user;
   }
 
+  /**
+   * @function handleError
+   * @description Handles error of catch block
+   * @author Shaili S.
+   * @module user
+   * @param err
+   */
   handleError(err: { status: any; message: any }): void {
-    Logger.error(err);
     throw new HttpException(err.message, err.status);
   }
 }

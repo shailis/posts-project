@@ -26,12 +26,12 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       },
     });
 
-    if (!user) {
-      throw new HttpException(
-        this.i18n.t('user.NotSignedIn'),
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
+    // if (!user) {
+    //   throw new HttpException(
+    //     this.i18n.t('user.NotSignedIn'),
+    //     HttpStatus.UNAUTHORIZED,
+    //   );
+    // }
 
     return user;
   }
