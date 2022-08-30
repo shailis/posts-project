@@ -1,0 +1,9 @@
+{
+  "SignUpSuccessful": "User signed up successfully",
+  "DuplicateEmail": "This email is already registered",
+  "InvalidEmail": "Inavlid Email!",
+  "InvalidPassword": "Inavlid Password!",
+  "SignInSuccessful": "User signed in successfully",
+  "NotSignedIn": "You are not currently signed in. Sign in to perform this action",
+  "SignOutSuccessful": "User signed out successfully"
+}

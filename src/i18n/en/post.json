@@ -1,0 +1,7 @@
+{
+  "ListRetrieved": "Post list retrieved successfully",
+  "CreateSuccessful": "Post created successfully",
+  "UpdateSuccessful": "Post updated successfully",
+  "DeleteSuccessful": "Post deleted successfully",
+  "InfoRetrieved": "Post retrieved successfully"
+}
