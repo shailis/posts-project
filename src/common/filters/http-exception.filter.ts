@@ -22,10 +22,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
       } at ${new Date().toLocaleDateString()}} Error: ${exception.message}`,
     );
 
+    // exception['response']['message'] property is present for class-validator ValidationPipe BadRequestException
+    // whereas we return exception.message for any HttpException thrown by us or otherwise
     response.status(status).json({
       statusCode: status,
       data: {},
-      message: exception.message,
+      message: exception['response']['message'] ?? exception.message,
     });
   }
 }

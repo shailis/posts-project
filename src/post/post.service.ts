@@ -1,7 +1,9 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { Post } from '@prisma/client';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { I18nService } from 'nestjs-i18n';
+import { constants } from 'src/common/constants';
+import { ResponseDto } from 'src/common/dto';
+import { HandleErrorClass } from 'src/common/helpers/handle-error.helper';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePostDto, ListPostDto, UpdatePostDto } from './dto';
 
@@ -10,10 +12,8 @@ export class PostService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly i18n: I18nService,
+    private readonly handleErrorClass: HandleErrorClass,
   ) {}
-
-  private readonly defaultPage: number = 1;
-  private readonly defaultPerPage: number = 10;
 
   /**
    * @function listPosts
@@ -27,17 +27,13 @@ export class PostService {
   async listPosts(
     userId: string,
     listPostDto: ListPostDto,
-  ): Promise<{
-    statusCode: HttpStatus;
-    data: { posts: Partial<Post>[]; count: number };
-    message: any;
-  }> {
+  ): Promise<ResponseDto> {
     Logger.log('post-->post.service.ts-->listPosts');
     try {
-      const page = listPostDto.page ? listPostDto.page : this.defaultPage;
-      const perPage = listPostDto.perPage
-        ? listPostDto.perPage
-        : this.defaultPerPage;
+      const page = listPostDto.page;
+      const perPage = listPostDto.perPage;
+      const sort =
+        listPostDto.sort === constants.ASC_SORT_ORDER ? 'asc' : 'desc';
 
       // get total post count of user
       const count: number = await this.prisma.post.count({
@@ -64,7 +60,7 @@ export class PostService {
           skip: (page * perPage) - perPage,
           take: perPage,
           orderBy: {
-            createdAt: 'desc',
+            createdAt: sort,
           },
         });
       }
@@ -78,7 +74,7 @@ export class PostService {
         message: this.i18n.t('post.ListRetrieved'),
       };
     } catch (err) {
-      this.handleError(err);
+      this.handleErrorClass.handleError(err);
     }
   }
 
@@ -94,7 +90,7 @@ export class PostService {
   async createPost(
     userId: string,
     createPostDto: CreatePostDto,
-  ): Promise<{ statusCode: HttpStatus; data: Post; message: any }> {
+  ): Promise<ResponseDto> {
     Logger.log('post-->post.service.ts-->createPost');
 
     try {
@@ -115,7 +111,7 @@ export class PostService {
         message: this.i18n.t('post.CreateSuccessful'),
       };
     } catch (err) {
-      this.handleError(err);
+      this.handleErrorClass.handleError(err);
     }
   }
 
@@ -133,7 +129,7 @@ export class PostService {
     userId: string,
     postId: string,
     updatePostDto: UpdatePostDto,
-  ): Promise<{ statusCode: HttpStatus; data: Post[]; message: any }> {
+  ): Promise<ResponseDto> {
     Logger.log('post-->post.service.ts-->updatePost');
     try {
       const updatedPost = await this.prisma.user
@@ -160,7 +156,7 @@ export class PostService {
         message: this.i18n.t('post.UpdateSuccessful'),
       };
     } catch (err) {
-      this.handleError(err);
+      this.handleErrorClass.handleError(err);
     }
   }
 
@@ -173,10 +169,7 @@ export class PostService {
    * @param postId
    * @returns { statusCode: HttpStatus; data: any; message: any }
    */
-  async deletePost(
-    userId: string,
-    postId: string,
-  ): Promise<{ statusCode: HttpStatus; data: any; message: any }> {
+  async deletePost(userId: string, postId: string): Promise<ResponseDto> {
     Logger.log('post-->post.service.ts-->deletePost');
     try {
       await this.prisma.user.update({
@@ -198,7 +191,7 @@ export class PostService {
         message: this.i18n.t('post.DeleteSuccessful'),
       };
     } catch (err) {
-      this.handleError(err);
+      this.handleErrorClass.handleError(err);
     }
   }
 
@@ -211,10 +204,7 @@ export class PostService {
    * @param postId
    * @returns { statusCode: HttpStatus; data: Post; message: any }
    */
-  async getPost(
-    userId: string,
-    postId: string,
-  ): Promise<{ statusCode: HttpStatus; data: Post; message: any }> {
+  async getPost(userId: string, postId: string): Promise<ResponseDto> {
     Logger.log('post-->post.service.ts-->getPost');
     try {
       const post = await this.prisma.post.findFirst({
@@ -230,18 +220,7 @@ export class PostService {
         message: this.i18n.t('post.InfoRetrieved'),
       };
     } catch (err) {
-      this.handleError(err);
+      this.handleErrorClass.handleError(err);
     }
-  }
-
-  /**
-   * @function handleError
-   * @description Handles error of catch block
-   * @author Shaili S.
-   * @module post
-   * @param err
-   */
-  handleError(err: { status: number; message: any }): void {
-    throw new HttpException(err.message, err.status);
   }
 }

@@ -7,6 +7,8 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { I18nService } from 'nestjs-i18n';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { ResponseDto } from 'src/common/dto';
+import { HandleErrorClass } from 'src/common/helpers/handle-error.helper';
 
 @Injectable()
 export class UserService {
@@ -14,6 +16,7 @@ export class UserService {
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
     private readonly i18n: I18nService,
+    private readonly handleErrorClass: HandleErrorClass,
   ) {}
 
   /**
@@ -24,11 +27,7 @@ export class UserService {
    * @param signUpDto
    * @returns { statusCode: HttpStatus; data: Omit<User, 'password'>; message: any }
    */
-  async signup(signUpDto: SignUpDto): Promise<{
-    statusCode: HttpStatus;
-    data: Omit<User, 'password'>;
-    message: any;
-  }> {
+  async signup(signUpDto: SignUpDto): Promise<ResponseDto> {
     Logger.log('user-->user.service.ts-->signup');
     try {
       // hash password
@@ -68,7 +67,10 @@ export class UserService {
         message = err.message;
       }
 
-      this.handleError({ status: statusCode, message: message });
+      this.handleErrorClass.handleError({
+        status: statusCode,
+        message: message,
+      });
     }
   }
 
@@ -80,11 +82,7 @@ export class UserService {
    * @param signInDto
    * @returns { statusCode: HttpStatus; data: Omit<User, 'password'>; message: any; }
    */
-  async signin(signInDto: SignInDto): Promise<{
-    statusCode: HttpStatus;
-    data: Omit<User, 'password'>;
-    message: any;
-  }> {
+  async signin(signInDto: SignInDto, lang: string): Promise<ResponseDto> {
     Logger.log('user-->user.service.ts-->signin');
     try {
       // find user
@@ -128,10 +126,10 @@ export class UserService {
       return {
         statusCode: HttpStatus.OK,
         data: this.exclude(updatedUserWithAuthToken, 'password'),
-        message: this.i18n.t('user.SignInSuccessful'),
+        message: this.i18n.t('user.SignInSuccessful', { lang: lang }),
       };
     } catch (err) {
-      this.handleError(err);
+      this.handleErrorClass.handleError(err);
     }
   }
 
@@ -143,11 +141,7 @@ export class UserService {
    * @param userId
    * @returns { statusCode: HttpStatus; data: Omit<User, 'password'>; message: any; }
    */
-  async signout(userId: string): Promise<{
-    statusCode: HttpStatus;
-    data: Omit<User, 'password'>;
-    message: any;
-  }> {
+  async signout(userId: string): Promise<ResponseDto> {
     Logger.log('user-->user.service.ts-->signout');
     try {
       // clear authToken of user
@@ -162,7 +156,7 @@ export class UserService {
         message: this.i18n.t('user.SignOutSuccessful'),
       };
     } catch (err) {
-      this.handleError(err);
+      this.handleErrorClass.handleError(err);
     }
   }
 
@@ -211,16 +205,5 @@ export class UserService {
       delete user[key];
     }
     return user;
-  }
-
-  /**
-   * @function handleError
-   * @description Handles error of catch block
-   * @author Shaili S.
-   * @module user
-   * @param err
-   */
-  handleError(err: { status: any; message: any }): void {
-    throw new HttpException(err.message, err.status);
   }
 }

@@ -1,12 +1,14 @@
 import {
   Body,
   Controller,
+  Headers,
   HttpCode,
   HttpStatus,
   Logger,
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtGuard } from 'src/common/guard';
 import { GetUser } from '../common/decorator';
 import { SignInDto, SignUpDto } from './dto';
@@ -23,11 +25,13 @@ export class UserController {
   }
 
   @Post('signin')
-  signin(@Body() signInDto: SignInDto) {
+  @HttpCode(HttpStatus.OK)
+  signin(@Body() signInDto: SignInDto, @Headers('Accept-Language') lang: any) {
     Logger.log('user-->user.controller.ts-->signin');
-    return this.userService.signin(signInDto);
+    return this.userService.signin(signInDto, lang);
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.OK)
   @Post('signout')

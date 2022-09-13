@@ -9,6 +9,7 @@ import {
   Delete,
   Logger,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { GetUser } from 'src/common/decorator';
 import { JwtGuard } from 'src/common/guard';
 import { ListPostDto, UpdatePostDto } from './dto';
@@ -16,6 +17,7 @@ import { CreatePostDto } from './dto';
 import { PostService } from './post.service';
 
 @UseGuards(JwtGuard)
+@ApiBearerAuth()
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}

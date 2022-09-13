@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { I18nModule } from 'nestjs-i18n';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
+import { HealthModule } from './health/health.module';
 import * as path from 'path';
 
 @Module({
@@ -23,8 +23,7 @@ import * as path from 'path';
     PrismaModule,
     UserModule,
     PostModule,
+    HealthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
