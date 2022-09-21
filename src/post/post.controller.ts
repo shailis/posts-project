@@ -8,8 +8,9 @@ import {
   Patch,
   Delete,
   Logger,
+  Param,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/common/decorator';
 import { JwtGuard } from 'src/common/guard';
 import { ListPostDto, UpdatePostDto } from './dto';
@@ -18,17 +19,18 @@ import { PostService } from './post.service';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
-@Controller('post')
+@Controller('posts')
+@ApiTags('posts')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  @Get('list')
+  @Get('')
   listPosts(@GetUser('id') userId: string, @Query() listPostDto: ListPostDto) {
     Logger.log('post-->post.controller.ts-->listPosts');
     return this.postService.listPosts(userId, listPostDto);
   }
 
-  @Post('create')
+  @Post('')
   createPost(
     @GetUser('id') userId: string,
     @Body() createPostDto: CreatePostDto,
@@ -37,24 +39,24 @@ export class PostController {
     return this.postService.createPost(userId, createPostDto);
   }
 
-  @Patch('update')
+  @Patch(':id')
   updatePost(
     @GetUser('id') userId: string,
-    @Query('id') postId: string,
+    @Param('id') postId: string,
     @Body() updatePostDto: UpdatePostDto,
   ) {
     Logger.log('post-->post.controller.ts-->updatePost');
     return this.postService.updatePost(userId, postId, updatePostDto);
   }
 
-  @Delete('delete')
+  @Delete()
   deletePost(@GetUser('id') userId: string, @Body('id') postId: string) {
     Logger.log('post-->post.controller.ts-->deletePost');
     return this.postService.deletePost(userId, postId);
   }
 
-  @Get()
-  getPost(@GetUser('id') userId: string, @Query('id') postId: string) {
+  @Get(':id')
+  getPost(@GetUser('id') userId: string, @Param('id') postId: string) {
     Logger.log('post-->post.controller.ts-->getPost');
     return this.postService.getPost(userId, postId);
   }

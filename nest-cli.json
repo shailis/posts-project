@@ -3,19 +3,49 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "assets": [{ "include": "i18n/*/*", "watchAssets": true }],
+    "assets": [
+      {
+        "include": "i18n/*/*",
+        "watchAssets": true
+      }
+    ],
     "plugins": [
       {
         "name": "@nestjs/swagger",
         "options": {
-          "dtoFileNameSuffix": [".dto.ts"],
-          "controllerFileNameSuffix": [".controller.ts"],
+          "dtoFileNameSuffix": [
+            ".dto.ts"
+          ],
+          "controllerFileNameSuffix": [
+            ".controller.ts"
+          ],
           "classValidatorShim": true,
           "dtoKeyOfComment": "description",
           "controllerKeyOfComment": "description",
           "introspectComments": true
         }
       }
-    ]
+    ],
+    "webpack": true
+  },
+  "projects": {
+    "util-config": {
+      "type": "library",
+      "root": "libs/util-config",
+      "entryFile": "index",
+      "sourceRoot": "libs/util-config/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/util-config/tsconfig.lib.json"
+      }
+    },
+    "feature-config": {
+      "type": "library",
+      "root": "libs/feature-config",
+      "entryFile": "index",
+      "sourceRoot": "libs/feature-config/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/feature-config/tsconfig.lib.json"
+      }
+    }
   }
 }

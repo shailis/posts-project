@@ -1,9 +1,19 @@
 {
-  "moduleFileExtensions": ["js", "json", "ts"],
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
   "rootDir": ".",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "@app/util-config/(.*)": "<rootDir>/../libs/util-config/src/$1",
+    "@app/util-config": "<rootDir>/../libs/util-config/src",
+    "@app/feature-config/(.*)": "<rootDir>/../libs/feature-config/src/$1",
+    "@app/feature-config": "<rootDir>/../libs/feature-config/src"
   }
 }

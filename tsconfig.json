@@ -16,6 +16,20 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@app/util-config": [
+        "libs/util-config/src"
+      ],
+      "@app/util-config/*": [
+        "libs/util-config/src/*"
+      ],
+      "@app/feature-config": [
+        "libs/feature-config/src"
+      ],
+      "@app/feature-config/*": [
+        "libs/feature-config/src/*"
+      ]
+    }
   }
 }

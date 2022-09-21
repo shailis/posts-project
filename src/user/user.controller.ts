@@ -8,13 +8,14 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/common/guard';
 import { GetUser } from '../common/decorator';
 import { SignInDto, SignUpDto } from './dto';
 import { UserService } from './user.service';
 
-@Controller('user')
+@Controller('users')
+@ApiTags('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

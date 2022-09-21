@@ -148,7 +148,12 @@ export class PostService {
             },
           },
         })
-        .posts();
+        .posts({
+          where: {
+            id: postId,
+          },
+        })
+        .then((data) => data[0]);
 
       return {
         statusCode: HttpStatus.OK,
